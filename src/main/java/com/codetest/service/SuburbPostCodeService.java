@@ -24,9 +24,9 @@ public interface SuburbPostCodeService {
 	 * @return Sorted list of Suburb name
 	 */
 	public static List<String> getOrderBySuburbASC(List<SuburbPostCode> suburbPostCodeList) {
-		Comparator<SuburbPostCode> byName = (sp1, sp2) -> sp1.getSuburbName().compareTo(sp2.getSuburbName());
 		return suburbPostCodeList.stream()
-				.sorted(byName)
+				.sorted(Comparator.comparing(
+						SuburbPostCode::getSuburbName))
 				.map(SuburbPostCode::getSuburbName)
 				.collect(Collectors.toList());
 
