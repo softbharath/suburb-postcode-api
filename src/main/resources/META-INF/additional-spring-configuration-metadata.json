@@ -1,0 +1,37 @@
+{"properties": [
+  {
+    "name": "exception.already-exists",
+    "type": "java.lang.String",
+    "description": "A description for 'exception.already-exists'"
+  },
+  {
+    "name": "exception.notFound",
+    "type": "java.lang.String",
+    "description": "A description for 'exception.notFound'"
+  },
+  {
+    "name": "exception.other",
+    "type": "java.lang.String",
+    "description": "A description for 'exception.other'"
+  },
+  {
+    "name": "suburbPostCode.exception.already-exists",
+    "type": "java.lang.String",
+    "description": "A description for 'suburbPostCode.exception.already-exists'"
+  },
+  {
+    "name": "suburbPostCode.exception.notFound",
+    "type": "java.lang.String",
+    "description": "A description for 'suburbPostCode.exception.notFound'"
+  },
+  {
+    "name": "suburbPostCode.exception.other",
+    "type": "java.lang.String",
+    "description": "A description for 'suburbPostCode.exception.other'"
+  },
+  {
+    "name": "suburbPostCode.exception.internalError",
+    "type": "java.lang.String",
+    "description": "A description for 'suburbPostCode.exception.internalError'"
+  }
+]}
