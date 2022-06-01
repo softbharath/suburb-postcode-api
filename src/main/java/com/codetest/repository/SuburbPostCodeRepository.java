@@ -13,9 +13,7 @@ import com.codetest.entity.SuburbPostCode;
 public interface SuburbPostCodeRepository extends JpaRepository<SuburbPostCode, Long>{
 	public Optional<List<SuburbPostCode>> findByPostCodeOrderBySuburbNameAsc(String postCode);
 	
-	@Query("select sp from SuburbPostCode sp where sp.postCode = :postCode and  lower(sp.suburbName) = lower(:suburbName)")
-	public Optional<SuburbPostCode> findByPostCodeAndSuburbName(String postCode, String suburbName);
+	public Optional<SuburbPostCode> findByPostCodeAndSuburbNameIgnoreCase(String postCode, String suburbName);
 	
-	@Query("select sp from SuburbPostCode sp where sp.postCode between :postCodeFrom and :postCodeTo")
-	public Optional<List<SuburbPostCode>> findByPostCodeRange(String postCodeFrom, String postCodeTo);
+	public Optional<List<SuburbPostCode>> findByPostCodeBetween(String postCodeFrom, String postCodeTo);
 }

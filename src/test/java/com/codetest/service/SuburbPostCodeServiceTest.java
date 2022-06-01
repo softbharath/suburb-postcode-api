@@ -39,7 +39,7 @@ public class SuburbPostCodeServiceTest {
 		@Test
 		public void testSaveSuburbPostcode() {
 	    	Mockito.when(
-	    			suburbPostCodeRepository.findByPostCodeAndSuburbName(any(String.class), any(String.class))).thenReturn(Optional.empty());
+	    			suburbPostCodeRepository.findByPostCodeAndSuburbNameIgnoreCase(any(String.class), any(String.class))).thenReturn(Optional.empty());
 	    	SuburbPostCode suburbPostCode = new SuburbPostCode("3000", "SuburbName");
 	    	Mockito.when(
 	    			suburbPostCodeRepository.save(any(SuburbPostCode.class))).thenReturn(suburbPostCode);
@@ -56,7 +56,7 @@ public class SuburbPostCodeServiceTest {
 		public void assertThrowsSuburbPostCodeAlreadyExistsException() {
 			Optional<SuburbPostCode> mockExisting = Optional.ofNullable(new SuburbPostCode("3000", "ExistingName"));
 	    	Mockito.when(
-	    			suburbPostCodeRepository.findByPostCodeAndSuburbName(any(String.class), any(String.class))).thenReturn(mockExisting);
+	    			suburbPostCodeRepository.findByPostCodeAndSuburbNameIgnoreCase(any(String.class), any(String.class))).thenReturn(mockExisting);
 			assertThrows(SuburbPostCodeAlreadyExistsException.class,
 					() -> suburbPostCodeService.saveSuburbPostCode(new SuburbPostCode("3000", "ExistingName")));
 		}
@@ -74,7 +74,7 @@ public class SuburbPostCodeServiceTest {
 	    	suburbPostCodeList.get().add(new SuburbPostCode("3001", "name2"));
 	
 	    	Mockito.when(
-	    			suburbPostCodeRepository.findByPostCodeRange(any(String.class),
+	    			suburbPostCodeRepository.findByPostCodeBetween(any(String.class),
 	    					any(String.class))).thenReturn(suburbPostCodeList);
 	    	
 	       	SearchResultPostCode srpc = suburbPostCodeService.searchBySuburbPostCodeRange("3000", "3001");
@@ -95,7 +95,7 @@ public class SuburbPostCodeServiceTest {
 		public void assertThrowsSuburbPostCodeNotFoundException() {
 			Optional<List<SuburbPostCode>> suburbPostCodeList = Optional.empty();
 	    	Mockito.when(
-	    			suburbPostCodeRepository.findByPostCodeRange(any(String.class),
+	    			suburbPostCodeRepository.findByPostCodeBetween(any(String.class),
 	    					any(String.class))).thenReturn(suburbPostCodeList);
 			assertThrows(SuburbPostCodeNotFoundException.class,
 					() -> suburbPostCodeService.searchBySuburbPostCodeRange("3000", "3001"));

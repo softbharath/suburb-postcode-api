@@ -32,7 +32,7 @@ public class SuburbPostCodeServiceImpl implements SuburbPostCodeService {
 	
 	@Override
 	public SearchResultPostCode searchBySuburbPostCodeRange(String postCodeFrom, String postCodeTo) {
-		Optional<List<SuburbPostCode>> suburbPostCodeList = suburbPostCodeRepository.findByPostCodeRange(postCodeFrom, postCodeTo);
+		Optional<List<SuburbPostCode>> suburbPostCodeList = suburbPostCodeRepository.findByPostCodeBetween(postCodeFrom, postCodeTo);
 		if(!suburbPostCodeList.isPresent() || suburbPostCodeList.get().isEmpty()) {
 			throw new SuburbPostCodeNotFoundException(notFound);
 		}
@@ -43,7 +43,7 @@ public class SuburbPostCodeServiceImpl implements SuburbPostCodeService {
 
 	@Override
 	public SuburbPostCode saveSuburbPostCode(SuburbPostCode suburbPostCode) {
-		Optional<SuburbPostCode> suburbPostCodeOpt = suburbPostCodeRepository.findByPostCodeAndSuburbName(
+		Optional<SuburbPostCode> suburbPostCodeOpt = suburbPostCodeRepository.findByPostCodeAndSuburbNameIgnoreCase(
 								suburbPostCode.getPostCode(), 
 								suburbPostCode.getSuburbName());
 		if(suburbPostCodeOpt.isPresent()) {
