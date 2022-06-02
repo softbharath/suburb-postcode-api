@@ -15,6 +15,9 @@ import com.codetest.entity.SuburbPostCode;
 import com.codetest.model.SearchResultPostCode;
 import com.codetest.service.SuburbPostCodeService;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 /**
  * Restful API for Suburb Post Code search and save a new record
  * 
@@ -36,12 +39,12 @@ public class SuburbPostCodeController {
 	 * @return The JSON Response containing list of sorted Suburb names and total number of characters of all Suburb names
 	 */
 	@GetMapping("/search")
-	public ResponseEntity<SearchResultPostCode> searchByPostCodeRange(
+	public Mono<ResponseEntity<SearchResultPostCode>> searchByPostCodeRange(
 			@RequestParam ("from")  String postCodeFrom,
 			@RequestParam ("to")  String postCodeTo){
 
 		SearchResultPostCode searchResult = service.searchBySuburbPostCodeRange(postCodeFrom, postCodeTo);
-		return ResponseEntity.ok(searchResult);
+		return Mono.just(ResponseEntity.ok(searchResult));
 	}
 	
 	/**
@@ -51,8 +54,8 @@ public class SuburbPostCodeController {
 	 * @return added record
 	 */
 	@PostMapping("/add")
-	public ResponseEntity<SuburbPostCode> addSuburbPostCode(@Validated @RequestBody SuburbPostCode newRow){
+	public Mono<ResponseEntity<SuburbPostCode>> addSuburbPostCode(@Validated @RequestBody SuburbPostCode newRow){
 		SuburbPostCode suburbPostCode =  service.saveSuburbPostCode(newRow);
-		return  new ResponseEntity<>(suburbPostCode, HttpStatus.CREATED);
+		return  Mono.just(new ResponseEntity<>(suburbPostCode, HttpStatus.CREATED));
 	}
 }

@@ -1,39 +1,33 @@
 package com.codetest.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.codetest.entity.SuburbPostCode;
 import com.codetest.model.SearchResultPostCode;
 import com.codetest.service.SuburbPostCodeService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import reactor.core.publisher.Mono;
 
 @ExtendWith({SpringExtension.class})
-@WebMvcTest(SuburbPostCodeController.class)
-@AutoConfigureMockMvc
+@WebFluxTest(SuburbPostCodeController.class)
 public class SuburbPostCodeControllerTest {
-    @Autowired
-    private MockMvc mvc;
+
     
     @Autowired
-    private ObjectMapper objectMapper;
+    private WebTestClient webClient;
     
     @MockBean
 	private SuburbPostCodeService suburbPostCodeService;
@@ -53,11 +47,14 @@ public class SuburbPostCodeControllerTest {
     			suburbPostCodeService.searchBySuburbPostCodeRange(Mockito.anyString(),
     					Mockito.anyString())).thenReturn(srpc);
     	
-        final String expectedResponseContent = objectMapper.writeValueAsString(srpc);
-
-        mvc.perform(get("/api/search?from=3000&to=4000").contentType(MediaType.APPLICATION_JSON))
-        		.andExpect(status().isOk())
-       			.andExpect(content().json(expectedResponseContent));
+       webClient.get().uri("/api/search?from=3000&to=4000")
+        .exchange()
+        .expectStatus().isOk()
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectBody()
+        .consumeWith(response ->
+        	Assertions.assertThat(response.getResponseBody()).isNotNull())
+        .jsonPath("$.totalCharsOfSuburbNames").isEqualTo(15);
 
     }
     
@@ -70,13 +67,19 @@ public class SuburbPostCodeControllerTest {
     	Mockito.when(
     			suburbPostCodeService.saveSuburbPostCode(Mockito.any())).thenReturn(suburbPostCode);
     	
-        final String expectedResponseContent = objectMapper.writeValueAsString(suburbPostCode);
-
-        mvc.perform(post("/api/add").contentType(MediaType.APPLICATION_JSON)
-        		.accept(MediaType.APPLICATION_JSON)
-        		.content(expectedResponseContent))
-        		.andExpect(status().isCreated())
-       			.andExpect(content().json(expectedResponseContent));
+       
+        webClient.post().uri("/api/add")
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON)
+        .body(Mono.just(suburbPostCode), SuburbPostCode.class)
+        .exchange()
+        .expectStatus().isCreated()
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectBody()
+        .consumeWith(response ->
+    	Assertions.assertThat(response.getResponseBody()).isNotNull())
+        .jsonPath("$.postCode").isEqualTo("3000")
+        .jsonPath("$.suburbName").isEqualTo("SuburbName");
     }
 
 }
